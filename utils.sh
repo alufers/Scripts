@@ -3,7 +3,7 @@ function install_deb_from_url {
         then echo "Please run as root"
         exit
     fi
-    tfile=$(mktemp /tmp/foo.XXXXXXXXX)
+    tfile=$(mktemp /tmp/install_deb_from_url.XXXXXXXXX)
     wget -O $tfile $1
     rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
     dpkg -i $tfile
@@ -11,4 +11,11 @@ function install_deb_from_url {
     apt --fix-broken install
     rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
     echo "====Done===="
+}
+
+function check_root {
+    if [ "$EUID" -ne 0 ]
+        then echo "Please run as root"
+        exit
+    fi
 }
