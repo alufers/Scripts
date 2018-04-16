@@ -5,10 +5,14 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-wget -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-dpkg -i /tmp/chrome.deb
-rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-apt --fix-broken install
-rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+echo "====Adding Google Chrome's apt repository to checked===="
+echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee -a /etc/apt/sources.list.d/google.list
+
+echo "====Adding Google's public GPG key to trusted===="
+wget --quiet -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+
+apt-get update
+echo "====Downloading Google Chrome stable===="
+apt-get install google-chrome-stable
+
 echo "====Done===="
